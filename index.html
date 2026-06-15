@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ZYNTRIX Firmware Flasher</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+<script type="module"
+src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module">
+</script>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>ZYNTRIX Firmware Flasher</h1>
+
+<p>
+Flash ESP32 firmware directly from your browser.
+</p>
+
+<div class="card">
+
+<label>Firmware Version</label>
+
+<select id="firmwareSelect">
+<option>Loading...</option>
+</select>
+
+<button id="refreshBtn">
+Refresh Releases
+</button>
+
+</div>
+
+<div class="card">
+
+<esp-web-install-button manifest="manifest.json">
+<button slot="activate">
+Connect & Flash
+</button>
+</esp-web-install-button>
+
+</div>
+
+<div id="status">
+Ready
+</div>
+
+</div>
+
+<script src="js/github-releases.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>
