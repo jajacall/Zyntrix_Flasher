@@ -5,7 +5,7 @@ const SUPABASE_KEY =
     "sb_publishable_W5-_1mnFcHtY9-FOk4IA3w_MGREKs9u";
 
 const supabase =
-    window.supabase.createClient(
+    supabase.createClient(
         SUPABASE_URL,
         SUPABASE_KEY
     );
@@ -23,7 +23,7 @@ async function verifyLicense() {
         .trim();
 
     const { data, error } =
-        await supabase
+        await sb
         .from("licenses")
         .select("*")
         .eq(
@@ -65,6 +65,11 @@ async function verifyLicense() {
         .removeAttribute(
             "disabled"
         );
+
+    document.getElementById(
+        "status"
+    ).innerText =
+        "License Verified";
 
     alert(
         "License Verified"
