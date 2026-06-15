@@ -21,6 +21,15 @@ async function verifyLicense() {
         )
         .value
         .trim();
+    
+    if (!key) {
+
+    alert(
+        "Please enter a license key"
+    );
+
+    return;
+}
 
     const { data, error } =
     await sb
