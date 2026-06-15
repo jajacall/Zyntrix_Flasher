@@ -67,12 +67,12 @@ if (!data) {
         data.license_key;
 
     document
-        .querySelector(
-            "esp-web-install-button"
-        )
-        .removeAttribute(
-            "disabled"
-        );
+    .getElementById(
+        "flashButton"
+    )
+    .removeAttribute(
+        "disabled"
+    );
 
     document.getElementById(
         "status"
