@@ -1,158 +1,52 @@
-const SUPABASE_URL = 
-    "https://pukkpjluyjrdqwusskfl.supabase.co";
-
-const SUPABASE_KEY = 
-    "sb_publishable_W5-_1mnFcHtY9-FOk4IA3w_MGREKs9u";
-
-const sb =
-    window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
-    );
+const REPO_OWNER = "jajacall";
+const REPO_NAME = "ZYNTRIX_Firmware_Flasher";
 
 let firmwareData = {};
 
 async function loadReleases() {
-
-    const select =
-        document.getElementById(
-            "firmwareSelect"
-        );
+    const select = document.getElementById("firmwareSelect");
 
     try {
+        select.innerHTML = "<option>Loading...</option>";
 
-        select.innerHTML =
-            "<option>Loading...</option>";
+        const response = await fetch(
+            `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases`
+        );
 
-        const { data, error } =
-            await sb
-                .from(
-                    "firmware_versions"
-                )
-                .select("*")
-                .eq(
-                    "active",
-                    true
-                )
-                .order(
-                    "created_at",
-                    {
-                        ascending: false
-                    }
-                );
-
-        if (error) {
-
-            console.error(
-                error
-            );
-
-            throw error;
+        if (!response.ok) {
+            throw new Error("Failed to load releases");
         }
+
+        const releases = await response.json();
 
         select.innerHTML = "";
 
         firmwareData = {};
 
-        if (
-            !data ||
-            data.length === 0
-        ) {
-
+        if (releases.length === 0) {
             select.innerHTML =
-                "<option>No Firmware Available</option>";
-
+                "<option>No Firmware Releases Found</option>";
             return;
         }
 
-        data.forEach(
-            (
-                fw
-            ) => {
+        releases.forEach((release) => {
+            const option = document.createElement("option");
 
-                const option =
-                    document.createElement(
-                        "option"
-                    );
+            option.value = release.tag_name;
+            option.textContent =
+                release.name || release.tag_name;
 
-                option.value =
-                    fw.folder_name;
+            select.appendChild(option);
 
-                option.textContent =
-                    fw.version;
+            firmwareData[release.tag_name] = release.assets;
+        });
 
-                select.appendChild(
-                    option
-                );
+        select.selectedIndex = 0;
 
-                firmwareData[
-                    fw.folder_name
-                ] = fw;
-            }
-        );
-
-    } catch (
-        error
-    ) {
-
-        console.error(
-            error
-        );
+    } catch (error) {
+        console.error(error);
 
         select.innerHTML =
-            "<option>Error Loading Firmware</option>";
+            "<option>Error Loading Releases</option>";
     }
-}
-
-async function getFirmwareUrls(
-    folder
-) {
-
-    const files = [
-
-        "ZYNTRIX_v1.0.1.ino.bootloader.bin",
-
-        "ZYNTRIX_v1.0.1.ino.partitions.bin",
-
-        "ZYNTRIX_v1.0.1.ino.bin"
-    ];
-
-    const result = [];
-
-    for (
-        const file
-        of files
-    ) {
-
-        const {
-            data,
-            error
-        } =
-            await sb
-                .storage
-                .from(
-                    "firmware"
-                )
-                .createSignedUrl(
-                    `${folder}/${file}`,
-                    300
-                );
-
-        if (
-            error
-        ) {
-
-            console.error(
-                error
-            );
-
-            throw error;
-        }
-
-        result.push(
-            data.signedUrl
-        );
-    }
-
-    return result;
 }
