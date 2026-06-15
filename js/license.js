@@ -23,26 +23,34 @@ async function verifyLicense() {
         .trim();
 
     const { data, error } =
-        await sb
-        .from("licenses")
-        .select("*")
-        .eq(
-            "license_key",
-            key
-        )
-        .single();
+    await sb
+    .from("licenses")
+    .select("*")
+    .eq(
+        "license_key",
+        key
+    )
+    .maybeSingle();
 
-    if (
-        error ||
-        !data
-    ) {
+    if (error) {
 
-        alert(
-            "Invalid License"
-        );
+    console.log(error);
 
-        return;
-    }
+    alert(
+        "Supabase Error"
+    );
+
+    return;
+}
+
+if (!data) {
+
+    alert(
+        "Invalid License"
+    );
+
+    return;
+}
 
     if (
         data.used
