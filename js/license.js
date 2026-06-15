@@ -76,6 +76,7 @@ if (!data) {
     data.license_key;
 
 // Consume license immediately
+const { error: updateError } =
 await sb
     .from("licenses")
     .update({
@@ -86,6 +87,17 @@ await sb
         "license_key",
         key
     );
+
+if (updateError) {
+
+    console.error(updateError);
+
+    alert(
+        "Failed to consume license"
+    );
+
+    return;
+}
 
 document
 .getElementById(
