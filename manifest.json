@@ -1,0 +1,27 @@
+{
+  "name": "ZYNTRIX Firmware",
+  "version": "1.0.1",
+
+  "builds": [
+    {
+      "chipFamily": "ESP32",
+
+      "parts": [
+        {
+          "path": "firmware/ZYNTRIX_v1.0.1.ino.bootloader.bin",
+          "offset": 4096
+        },
+
+        {
+          "path": "firmware/ZYNTRIX_v1.0.1.ino.partitions.bin",
+          "offset": 32768
+        },
+
+        {
+          "path": "firmware/ZYNTRIX_v1.0.1.ino.bin",
+          "offset": 65536
+        }
+      ]
+    }
+  ]
+}
