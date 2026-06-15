@@ -68,11 +68,9 @@ if (!data) {
 
     document
     .getElementById(
-        "flashButton"
+        "flashActivate"
     )
-    .removeAttribute(
-        "disabled"
-    );
+    .disabled = false;
 
     document.getElementById(
         "status"
@@ -91,4 +89,17 @@ document
 .addEventListener(
     "click",
     verifyLicense
+);
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        document
+        .getElementById(
+            "flashActivate"
+        )
+        .disabled = true;
+
+    }
 );
