@@ -1,145 +1,151 @@
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
-
-        loadReleases();
-
-        document
-            .getElementById("refreshBtn")
-            .addEventListener(
-                "click",
-                loadReleases
-            );
-
-        document
-            .getElementById("firmwareSelect")
-            .addEventListener(
-                "change",
-                updateManifest
-            );
-
-    }
-);
-
 async function updateManifest() {
 
-    const version =
+    const folder =
         document.getElementById(
             "firmwareSelect"
         ).value;
 
-    const assets =
-        firmwareData[version];
+    try {
 
-    if (!assets)
-        return;
+        const bootloader =
+            await sb.storage
+                .from("firmware")
+                .createSignedUrl(
+                    `${folder}/ZYNTRIX_v1.0.1.ino.bootloader.bin`,
+                    300
+                );
 
-    const appBin =
-        assets.find(asset =>
-            asset.name.endsWith(".ino.bin")
-        );
+        const partitions =
+            await sb.storage
+                .from("firmware")
+                .createSignedUrl(
+                    `${folder}/ZYNTRIX_v1.0.1.ino.partitions.bin`,
+                    300
+                );
 
-    const bootloader =
-        assets.find(asset =>
-            asset.name.includes(
-                "bootloader"
+        const firmware =
+            await sb.storage
+                .from("firmware")
+                .createSignedUrl(
+                    `${folder}/ZYNTRIX_v1.0.1.ino.bin`,
+                    300
+                );
+
+        if (
+            bootloader.error ||
+            partitions.error ||
+            firmware.error
+        ) {
+
+            console.error(
+                bootloader.error ||
+                partitions.error ||
+                firmware.error
+            );
+
+            document.getElementById(
+                "status"
+            ).innerText =
+                "Failed loading firmware";
+
+            return;
+        }
+
+        const manifest = {
+
+            name:
+                "ZYNTRIX Firmware",
+
+            version:
+                folder,
+
+            builds: [
+
+                {
+
+                    chipFamily:
+                        "ESP32",
+
+                    parts: [
+
+                        {
+
+                            path:
+                                bootloader.data.signedUrl,
+
+                            offset:
+                                4096
+                        },
+
+                        {
+
+                            path:
+                                partitions.data.signedUrl,
+
+                            offset:
+                                32768
+                        },
+
+                        {
+
+                            path:
+                                firmware.data.signedUrl,
+
+                            offset:
+                                65536
+                        }
+
+                    ]
+
+                }
+
+            ]
+
+        };
+
+        const manifestBlob =
+            new Blob(
+                [
+                    JSON.stringify(
+                        manifest
+                    )
+                ],
+                {
+                    type:
+                        "application/json"
+                }
+            );
+
+        const manifestURL =
+            URL.createObjectURL(
+                manifestBlob
+            );
+
+        document
+            .querySelector(
+                "esp-web-install-button"
             )
-        );
-
-    const partitions =
-        assets.find(asset =>
-            asset.name.includes(
-                "partitions"
-            )
-        );
-
-    if (
-        !appBin ||
-        !bootloader ||
-        !partitions
-    ) {
+            .setAttribute(
+                "manifest",
+                manifestURL
+            );
 
         document.getElementById(
             "status"
         ).innerText =
-            "Firmware files missing in release";
+            `Selected ${folder}`;
 
-        return;
+    } catch (
+        error
+    ) {
+
+        console.error(
+            error
+        );
+
+        document.getElementById(
+            "status"
+        ).innerText =
+            "Firmware error";
     }
-
-    const manifest = {
-
-        name:
-            "ZYNTRIX Firmware",
-
-        version:
-
-            version,
-
-        builds: [
-
-            {
-                chipFamily:
-                    "ESP32",
-
-                parts: [
-
-                    {
-                        path:
-                            bootloader.browser_download_url,
-                        offset:
-                            4096
-                    },
-
-                    {
-                        path:
-                            partitions.browser_download_url,
-                        offset:
-                            32768
-                    },
-
-                    {
-                        path:
-                            appBin.browser_download_url,
-                        offset:
-                            65536
-                    }
-
-                ]
-            }
-
-        ]
-    };
-
-    const manifestBlob =
-        new Blob(
-            [
-                JSON.stringify(
-                    manifest
-                )
-            ],
-            {
-                type:
-                    "application/json"
-            }
-        );
-
-    const manifestURL =
-        URL.createObjectURL(
-            manifestBlob
-        );
-
-    document
-        .querySelector(
-            "esp-web-install-button"
-        )
-        .setAttribute(
-            "manifest",
-            manifestURL
-        );
-
-    document.getElementById(
-        "status"
-    ).innerText =
-        `Selected ${version}`;
 }
