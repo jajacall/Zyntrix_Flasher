@@ -1,52 +1,105 @@
-const REPO_OWNER = "jajacall";
-const REPO_NAME = "ZYNTRIX_Firmware_Flasher";
+const SUPABASE_URL =
+    "https://pukkpjluyjrdqwusskfl.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_W5-_1mnFcHtY9-FOk4IA3w_MGREKs9u";
+
+const sb =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
 
 let firmwareData = {};
 
 async function loadReleases() {
-    const select = document.getElementById("firmwareSelect");
 
-    try {
-        select.innerHTML = "<option>Loading...</option>";
-
-        const response = await fetch(
-            `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases`
+    const select =
+        document.getElementById(
+            "firmwareSelect"
         );
 
-        if (!response.ok) {
-            throw new Error("Failed to load releases");
-        }
+    try {
 
-        const releases = await response.json();
+        select.innerHTML =
+            "<option>Loading...</option>";
+
+        const { data, error } =
+            await sb
+                .from(
+                    "firmware_versions"
+                )
+                .select("*")
+                .eq(
+                    "active",
+                    true
+                )
+                .order(
+                    "created_at",
+                    {
+                        ascending: false
+                    }
+                );
+
+        if (error) {
+
+            console.error(
+                error
+            );
+
+            throw error;
+        }
 
         select.innerHTML = "";
 
         firmwareData = {};
 
-        if (releases.length === 0) {
+        if (
+            !data ||
+            data.length === 0
+        ) {
+
             select.innerHTML =
-                "<option>No Firmware Releases Found</option>";
+                "<option>No Firmware Available</option>";
+
             return;
         }
 
-        releases.forEach((release) => {
-            const option = document.createElement("option");
+        data.forEach(
+            (
+                fw
+            ) => {
 
-            option.value = release.tag_name;
-            option.textContent =
-                release.name || release.tag_name;
+                const option =
+                    document.createElement(
+                        "option"
+                    );
 
-            select.appendChild(option);
+                option.value =
+                    fw.folder_name;
 
-            firmwareData[release.tag_name] = release.assets;
-        });
+                option.textContent =
+                    fw.version;
 
-        select.selectedIndex = 0;
+                select.appendChild(
+                    option
+                );
 
-    } catch (error) {
-        console.error(error);
+                firmwareData[
+                    fw.folder_name
+                ] = fw;
+            }
+        );
+
+    } catch (
+        error
+    ) {
+
+        console.error(
+            error
+        );
 
         select.innerHTML =
-            "<option>Error Loading Releases</option>";
+            "<option>Error Loading Firmware</option>";
     }
 }
