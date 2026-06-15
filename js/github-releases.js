@@ -1,34 +1,52 @@
-const REPO_OWNER="jajacall";
-const REPO_NAME="ZYNTRIX_Firmware_Flasher";
+const REPO_OWNER = "jajacall";
+const REPO_NAME = "ZYNTRIX_Firmware_Flasher";
 
-async function loadReleases()
-{
-    const select=document.getElementById("firmwareSelect");
+let firmwareData = {};
 
-    try
-    {
-        const response=
-        await fetch(
-        `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases`
+async function loadReleases() {
+    const select = document.getElementById("firmwareSelect");
+
+    try {
+        select.innerHTML = "<option>Loading...</option>";
+
+        const response = await fetch(
+            `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases`
         );
 
-        const releases=await response.json();
+        if (!response.ok) {
+            throw new Error("Failed to load releases");
+        }
 
-        select.innerHTML="";
+        const releases = await response.json();
 
-        releases.forEach(release =>
-        {
-            const option=document.createElement("option");
+        select.innerHTML = "";
 
-            option.value=release.tag_name;
-            option.textContent=release.tag_name;
+        firmwareData = {};
+
+        if (releases.length === 0) {
+            select.innerHTML =
+                "<option>No Firmware Releases Found</option>";
+            return;
+        }
+
+        releases.forEach((release) => {
+            const option = document.createElement("option");
+
+            option.value = release.tag_name;
+            option.textContent =
+                release.name || release.tag_name;
 
             select.appendChild(option);
+
+            firmwareData[release.tag_name] = release.assets;
         });
-    }
-    catch(error)
-    {
-        select.innerHTML=
-        "<option>Error Loading Releases</option>";
+
+        select.selectedIndex = 0;
+
+    } catch (error) {
+        console.error(error);
+
+        select.innerHTML =
+            "<option>Error Loading Releases</option>";
     }
 }
