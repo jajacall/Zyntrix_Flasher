@@ -1,3 +1,15 @@
+const SUPABASE_URL =
+    "https://pukkpjluyjrdqwusskfl.supabase.co";
+
+const SUPABASE_KEY =
+    "YOUR_PUBLISHABLE_KEY";
+
+const sb =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
 let firmwareData = {};
 
 async function loadReleases() {
@@ -90,57 +102,4 @@ async function loadReleases() {
         select.innerHTML =
             "<option>Error Loading Firmware</option>";
     }
-}
-
-async function getFirmwareUrls(
-    folder
-) {
-
-    const files = [
-
-        "ZYNTRIX_v1.0.1.ino.bootloader.bin",
-
-        "ZYNTRIX_v1.0.1.ino.partitions.bin",
-
-        "ZYNTRIX_v1.0.1.ino.bin"
-    ];
-
-    const result = [];
-
-    for (
-        const file
-        of files
-    ) {
-
-        const {
-            data,
-            error
-        } =
-            await sb
-                .storage
-                .from(
-                    "firmware"
-                )
-                .createSignedUrl(
-                    `${folder}/${file}`,
-                    300
-                );
-
-        if (
-            error
-        ) {
-
-            console.error(
-                error
-            );
-
-            throw error;
-        }
-
-        result.push(
-            data.signedUrl
-        );
-    }
-
-    return result;
 }
