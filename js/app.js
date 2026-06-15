@@ -149,3 +149,38 @@ async function updateManifest() {
             "Firmware error";
     }
 }
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async () => {
+
+        await loadReleases();
+
+        if (
+            document.getElementById(
+                "firmwareSelect"
+            ).value
+        ) {
+
+            updateManifest();
+        }
+
+        document
+        .getElementById(
+            "firmwareSelect"
+        )
+        .addEventListener(
+            "change",
+            updateManifest
+        );
+
+        document
+        .getElementById(
+            "refreshBtn"
+        )
+        .addEventListener(
+            "click",
+            loadReleases
+        );
+    }
+);
