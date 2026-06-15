@@ -73,13 +73,25 @@ if (!data) {
     }
 
     verifiedLicense =
-        data.license_key;
+    data.license_key;
 
-    document
-    .getElementById(
-        "flashActivate"
-    )
-    .disabled = false;
+// Consume license immediately
+await sb
+    .from("licenses")
+    .update({
+        used: true,
+        used_at: new Date().toISOString()
+    })
+    .eq(
+        "license_key",
+        key
+    );
+
+document
+.getElementById(
+    "flashActivate"
+)
+.disabled = false;
 
     document.getElementById(
         "status"
