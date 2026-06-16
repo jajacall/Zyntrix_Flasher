@@ -169,25 +169,45 @@ document
     );
 
 document
-    .getElementById(
-        "flashActivate"
-    )
-    .addEventListener(
-        "click",
-        (e) => {
+.getElementById(
+    "flashActivate"
+)
+.addEventListener(
+    "click",
+    async (e) => {
 
-            if (
-                !verifiedLicense
-            ) {
+        if (!verifiedLicense) {
 
-                e.preventDefault();
+            e.preventDefault();
 
-                alert(
-                    "Verify license first"
-                );
-            }
+            alert(
+                "Verify license first"
+            );
+
+            return;
         }
-    );
+
+        const success =
+            await consumeLicense();
+
+        if (!success) {
+
+            e.preventDefault();
+
+            alert(
+                "Failed to consume license"
+            );
+
+            return;
+        }
+
+        resetLicense();
+
+        console.log(
+            "License consumed"
+        );
+    }
+);
 
 document.addEventListener(
     "DOMContentLoaded",
