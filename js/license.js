@@ -1,57 +1,57 @@
 let verifiedLicense = null;
 
+/* -------------------------
+   VERIFY LICENSE
+------------------------- */
+
 async function verifyLicense() {
 
     const key =
         document
-        .getElementById(
-            "licenseKey"
-        )
-        .value
-        .trim();
-    
+            .getElementById("licenseKey")
+            .value
+            .trim();
+
     if (!key) {
 
-    alert(
-        "Please enter a license key"
-    );
+        alert(
+            "Please enter a license key"
+        );
 
-    return;
-}
+        return;
+    }
 
     const { data, error } =
-    await sb
-    .from("licenses")
-    .select("*")
-    .eq(
-        "license_key",
-        key
-    )
-    .maybeSingle();
+        await sb
+            .from("licenses")
+            .select("*")
+            .eq(
+                "license_key",
+                key
+            )
+            .maybeSingle();
 
     if (error) {
 
-    console.log(error);
+        console.error(error);
 
-    alert(
-        "Supabase Error"
-    );
+        alert(
+            "Supabase Error"
+        );
 
-    return;
-}
+        return;
+    }
 
-if (!data) {
+    if (!data) {
 
-    alert(
-        "Invalid License"
-    );
+        alert(
+            "Invalid License"
+        );
 
-    return;
-}
+        return;
+    }
 
-    if (
-        data.used
-    ) {
+    if (data.used) {
 
         alert(
             "License Already Used"
@@ -63,26 +63,17 @@ if (!data) {
     verifiedLicense =
         data.license_key;
 
-if (updateError) {
+    document
+        .getElementById(
+            "flashActivate"
+        )
+        .disabled = false;
 
-    console.error(updateError);
-
-    alert(
-        "Failed to consume license"
-    );
-
-    return;
-}
-
-document
-.getElementById(
-    "flashActivate"
-)
-.disabled = false;
-
-    document.getElementById(
-        "status"
-    ).innerText =
+    document
+        .getElementById(
+            "status"
+        )
+        .innerText =
         "License Verified";
 
     alert(
@@ -90,48 +81,9 @@ document
     );
 }
 
-document
-.getElementById(
-    "verifyLicense"
-)
-.addEventListener(
-    "click",
-    verifyLicense
-);
-
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
-
-        document
-        .getElementById(
-            "flashActivate"
-        )
-        .disabled = true;
-
-    }
-);
-
-document
-.getElementById(
-    "flashActivate"
-)
-.addEventListener(
-    "click",
-    e => {
-
-        if (
-            !verifiedLicense
-        ) {
-
-            e.preventDefault();
-
-            alert(
-                "Verify license first"
-            );
-        }
-    }
-);
+/* -------------------------
+   CONSUME LICENSE
+------------------------- */
 
 async function consumeLicense() {
 
@@ -144,7 +96,9 @@ async function consumeLicense() {
             .from("licenses")
             .update({
                 used: true,
-                used_at: new Date().toISOString()
+                used_at:
+                    new Date()
+                    .toISOString()
             })
             .eq(
                 "license_key",
@@ -161,20 +115,76 @@ async function consumeLicense() {
     return true;
 }
 
+/* -------------------------
+   RESET LICENSE
+------------------------- */
+
 function resetLicense() {
 
     verifiedLicense = null;
 
-    document.getElementById(
-        "licenseKey"
-    ).value = "";
+    document
+        .getElementById(
+            "licenseKey"
+        )
+        .value = "";
 
-    document.getElementById(
-        "flashActivate"
-    ).disabled = true;
+    document
+        .getElementById(
+            "flashActivate"
+        )
+        .disabled = true;
 
-    document.getElementById(
-        "status"
-    ).innerText =
+    document
+        .getElementById(
+            "status"
+        )
+        .innerText =
         "Enter New License";
 }
+
+/* -------------------------
+   EVENTS
+------------------------- */
+
+document
+    .getElementById(
+        "verifyLicense"
+    )
+    .addEventListener(
+        "click",
+        verifyLicense
+    );
+
+document
+    .getElementById(
+        "flashActivate"
+    )
+    .addEventListener(
+        "click",
+        (e) => {
+
+            if (
+                !verifiedLicense
+            ) {
+
+                e.preventDefault();
+
+                alert(
+                    "Verify license first"
+                );
+            }
+        }
+    );
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        document
+            .getElementById(
+                "flashActivate"
+            )
+            .disabled = true;
+    }
+);
