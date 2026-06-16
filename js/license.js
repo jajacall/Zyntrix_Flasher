@@ -87,28 +87,40 @@ async function verifyLicense() {
 
 async function consumeLicense() {
 
+    console.log(
+        "Consuming license:",
+        verifiedLicense
+    );
+
     if (!verifiedLicense) {
+
+        console.log(
+            "No verified license"
+        );
+
         return false;
     }
 
-    const { error } =
+    const { data, error } =
         await sb
             .from("licenses")
             .update({
                 used: true,
-                used_at:
-                    new Date()
-                    .toISOString()
+                used_at: new Date().toISOString()
             })
             .eq(
                 "license_key",
                 verifiedLicense
-            );
+            )
+            .select();
+
+    console.log(
+        "Consume result:",
+        data,
+        error
+    );
 
     if (error) {
-
-        console.error(error);
-
         return false;
     }
 
