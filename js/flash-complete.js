@@ -1,23 +1,15 @@
-const flashButton =
-    document.getElementById(
-        "flashButton"
-    );
-
-flashButton.addEventListener(
-    "state-changed",
+window.addEventListener(
+    "message",
     async (event) => {
 
-        const state =
-            event.detail.state;
-
-        console.log(
-            "ESP State:",
-            state
-        );
-
         if (
-            state === "finished"
+            event.data?.type ===
+            "flash-complete"
         ) {
+
+            console.log(
+                "Flash completed"
+            );
 
             const success =
                 await consumeLicense();
@@ -27,7 +19,13 @@ flashButton.addEventListener(
                 resetLicense();
 
                 alert(
-                    "Firmware flashed successfully. License consumed."
+                    "Flash successful. License consumed. Enter a new license key for the next flash."
+                );
+
+            } else {
+
+                alert(
+                    "Firmware flashed but license could not be consumed."
                 );
             }
         }
