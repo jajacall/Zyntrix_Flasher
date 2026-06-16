@@ -63,19 +63,6 @@ if (!data) {
     verifiedLicense =
     data.license_key;
 
-// Consume license immediately
-const { error: updateError } =
-await sb
-    .from("licenses")
-    .update({
-        used: true,
-        used_at: new Date().toISOString()
-    })
-    .eq(
-        "license_key",
-        key
-    );
-
 if (updateError) {
 
     console.error(updateError);
@@ -124,3 +111,49 @@ document.addEventListener(
 
     }
 );
+
+async function consumeLicense() {
+
+    if (!verifiedLicense) {
+        return false;
+    }
+
+    const { error } =
+        await sb
+            .from("licenses")
+            .update({
+                used: true,
+                used_at: new Date().toISOString()
+            })
+            .eq(
+                "license_key",
+                verifiedLicense
+            );
+
+    if (error) {
+
+        console.error(error);
+
+        return false;
+    }
+
+    return true;
+}
+
+function resetLicense() {
+
+    verifiedLicense = null;
+
+    document.getElementById(
+        "licenseKey"
+    ).value = "";
+
+    document.getElementById(
+        "flashActivate"
+    ).disabled = true;
+
+    document.getElementById(
+        "status"
+    ).innerText =
+        "Enter New License";
+}
