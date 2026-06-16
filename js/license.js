@@ -61,7 +61,7 @@ if (!data) {
     }
 
     verifiedLicense =
-    data.license_key;
+        data.license_key;
 
 if (updateError) {
 
@@ -112,6 +112,27 @@ document.addEventListener(
     }
 );
 
+document
+.getElementById(
+    "flashActivate"
+)
+.addEventListener(
+    "click",
+    e => {
+
+        if (
+            !verifiedLicense
+        ) {
+
+            e.preventDefault();
+
+            alert(
+                "Verify license first"
+            );
+        }
+    }
+);
+
 async function consumeLicense() {
 
     if (!verifiedLicense) {
@@ -157,24 +178,3 @@ function resetLicense() {
     ).innerText =
         "Enter New License";
 }
-
-document
-.getElementById(
-    "flashActivate"
-)
-.addEventListener(
-    "click",
-    e => {
-
-        if (
-            !verifiedLicense
-        ) {
-
-            e.preventDefault();
-
-            alert(
-                "Verify license first"
-            );
-        }
-    }
-);
