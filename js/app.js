@@ -158,16 +158,10 @@ async function updateManifest() {
             manifest
         );
         
-        const container =
-            document.getElementById(
-                "flashContainer"
-        );
-
-        container.innerHTML = `
-        <esp-web-install-button
-            manifest="${manifestURL}">
-        </esp-web-install-button>
-        `;    
+        .setAttribute(
+            "manifest",
+            manifestURL
+        );   
 
         document.getElementById(
             "status"
