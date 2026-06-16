@@ -152,15 +152,22 @@ async function updateManifest() {
         console.log(
             manifest
         );
+
+        console.log(
+            "Installing manifest:",
+            manifest
+        );
         
-        document
-            .querySelector(
-                "esp-web-install-button"
-            )
-            .setAttribute(
-                "manifest",
-                manifestURL
-            );
+        const container =
+            document.getElementById(
+                "flashContainer"
+        );
+
+        container.innerHTML = `
+        <esp-web-install-button
+            manifest="${manifestURL}">
+        </esp-web-install-button>
+        `;    
 
         document.getElementById(
             "status"
