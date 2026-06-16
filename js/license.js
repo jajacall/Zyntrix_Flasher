@@ -157,3 +157,24 @@ function resetLicense() {
     ).innerText =
         "Enter New License";
 }
+
+document
+.getElementById(
+    "flashActivate"
+)
+.addEventListener(
+    "click",
+    e => {
+
+        if (
+            !verifiedLicense
+        ) {
+
+            e.preventDefault();
+
+            alert(
+                "Verify license first"
+            );
+        }
+    }
+);
