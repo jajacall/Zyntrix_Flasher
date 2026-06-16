@@ -5,6 +5,11 @@ async function updateManifest() {
             "firmwareSelect"
         ).value;
 
+    console.log(
+        "Selected folder:",
+        folder
+    );
+
     try {
 
         const bootloader =
@@ -54,7 +59,7 @@ async function updateManifest() {
         const manifest = {
 
             name:
-                "ZYNTRIX Firmware",
+                `ZYNTRIX Firmware ${folder}`,
 
             version:
                 folder,
@@ -121,6 +126,10 @@ async function updateManifest() {
                 manifestBlob
             );
 
+        console.log(
+            manifest
+        );
+        
         document
             .querySelector(
                 "esp-web-install-button"
