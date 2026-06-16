@@ -1,12 +1,17 @@
 async function updateManifest() {
 
     const folder =
-    document.getElementById(
-        "firmwareSelect"
-    ).value;
+        document.getElementById(
+            "firmwareSelect"
+        ).value;
 
     const baseName =
         `ZYNTRIX_${folder}.ino`;
+
+    console.log(
+        "Loading firmware:",
+        folder
+    );
 
     try {
 
@@ -54,6 +59,16 @@ async function updateManifest() {
             return;
         }
 
+        console.log(
+            "Bootloader URL:",
+            bootloader.data.signedUrl
+        );
+
+        console.log(
+            "Firmware URL:",
+            firmware.data.signedUrl
+        );
+
         const manifest = {
 
             name:
@@ -72,28 +87,22 @@ async function updateManifest() {
                     parts: [
 
                         {
-
                             path:
                                 bootloader.data.signedUrl,
-
                             offset:
                                 4096
                         },
 
                         {
-
                             path:
                                 partitions.data.signedUrl,
-
                             offset:
                                 32768
                         },
 
                         {
-
                             path:
                                 firmware.data.signedUrl,
-
                             offset:
                                 65536
                         }
@@ -124,19 +133,29 @@ async function updateManifest() {
                 manifestBlob
             );
 
-        document
-            .querySelector(
+        const installer =
+            document.querySelector(
                 "esp-web-install-button"
-            )
-            .setAttribute(
-                "manifest",
-                manifestURL
             );
+
+        installer.removeAttribute(
+            "manifest"
+        );
+
+        installer.setAttribute(
+            "manifest",
+            manifestURL
+        );
 
         document.getElementById(
             "status"
         ).innerText =
             `Selected ${folder}`;
+
+        console.log(
+            "Manifest Updated:",
+            folder
+        );
 
     } catch (
         error
@@ -159,31 +178,43 @@ document.addEventListener(
 
         await loadReleases();
 
-        if (
+        const select =
             document.getElementById(
                 "firmwareSelect"
-            ).value
+            );
+
+        if (
+            select.value
         ) {
 
-            updateManifest();
+            await updateManifest();
         }
 
-        document
-        .getElementById(
-            "firmwareSelect"
-        )
-        .addEventListener(
+        select.addEventListener(
             "change",
-            updateManifest
+            async () => {
+
+                await updateManifest();
+
+                console.log(
+                    "Version changed:",
+                    select.value
+                );
+            }
         );
 
         document
-        .getElementById(
-            "refreshBtn"
-        )
-        .addEventListener(
-            "click",
-            loadReleases
-        );
+            .getElementById(
+                "refreshBtn"
+            )
+            .addEventListener(
+                "click",
+                async () => {
+
+                    await loadReleases();
+
+                    await updateManifest();
+                }
+            );
     }
 );
