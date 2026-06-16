@@ -5,13 +5,8 @@ async function updateManifest() {
         "firmwareSelect"
     ).value;
 
-const firmware =
-    firmwareData[
-        folder
-    ];
-
-const baseName =
-    firmware.firmware_name;
+    const baseName =
+        `ZYNTRIX_${folder}.ino`;
 
     try {
 
