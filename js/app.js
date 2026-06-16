@@ -1,9 +1,17 @@
 async function updateManifest() {
 
     const folder =
-        document.getElementById(
-            "firmwareSelect"
-        ).value;
+    document.getElementById(
+        "firmwareSelect"
+    ).value;
+
+const firmware =
+    firmwareData[
+        folder
+    ];
+
+const baseName =
+    firmware.firmware_name;
 
     try {
 
@@ -11,7 +19,7 @@ async function updateManifest() {
             await sb.storage
                 .from("firmware")
                 .createSignedUrl(
-                    `${folder}/ZYNTRIX_v1.0.1.ino.bootloader.bin`,
+                    `${folder}/${baseName}.bootloader.bin`,
                     300
                 );
 
@@ -19,7 +27,7 @@ async function updateManifest() {
             await sb.storage
                 .from("firmware")
                 .createSignedUrl(
-                    `${folder}/ZYNTRIX_v1.0.1.ino.partitions.bin`,
+                    `${folder}/${baseName}.partitions.bin`,
                     300
                 );
 
@@ -27,7 +35,7 @@ async function updateManifest() {
             await sb.storage
                 .from("firmware")
                 .createSignedUrl(
-                    `${folder}/ZYNTRIX_v1.0.1.ino.bin`,
+                    `${folder}/${baseName}.bin`,
                     300
                 );
 
