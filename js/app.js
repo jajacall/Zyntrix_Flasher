@@ -42,10 +42,19 @@ async function updateManifest() {
             firmware.error
         ) {
 
-            console.error(
-                bootloader.error ||
-                partitions.error ||
-                firmware.error
+            console.log(
+                "Bootloader:",
+                bootloader
+            );
+
+            console.log(
+                "Partitions:",
+                partitions
+            );
+
+            console.log(
+                "Firmware:",
+                firmware
             );
 
             document.getElementById(
