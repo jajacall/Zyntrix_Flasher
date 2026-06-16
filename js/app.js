@@ -5,21 +5,13 @@ async function updateManifest() {
             "firmwareSelect"
         ).value;
 
-    const baseName =
-        `ZYNTRIX_${folder}.ino`;
-
-    console.log(
-        "Loading firmware:",
-        folder
-    );
-
     try {
 
         const bootloader =
             await sb.storage
                 .from("firmware")
                 .createSignedUrl(
-                    `${folder}/${baseName}.bootloader.bin`,
+                    `${folder}/bootloader.bin`,
                     300
                 );
 
@@ -27,7 +19,7 @@ async function updateManifest() {
             await sb.storage
                 .from("firmware")
                 .createSignedUrl(
-                    `${folder}/${baseName}.partitions.bin`,
+                    `${folder}/partitions.bin`,
                     300
                 );
 
@@ -35,7 +27,7 @@ async function updateManifest() {
             await sb.storage
                 .from("firmware")
                 .createSignedUrl(
-                    `${folder}/${baseName}.bin`,
+                    `${folder}/firmware.bin`,
                     300
                 );
 
@@ -59,16 +51,6 @@ async function updateManifest() {
             return;
         }
 
-        console.log(
-            "Bootloader URL:",
-            bootloader.data.signedUrl
-        );
-
-        console.log(
-            "Firmware URL:",
-            firmware.data.signedUrl
-        );
-
         const manifest = {
 
             name:
@@ -87,22 +69,28 @@ async function updateManifest() {
                     parts: [
 
                         {
+
                             path:
                                 bootloader.data.signedUrl,
+
                             offset:
                                 4096
                         },
 
                         {
+
                             path:
                                 partitions.data.signedUrl,
+
                             offset:
                                 32768
                         },
 
                         {
+
                             path:
                                 firmware.data.signedUrl,
+
                             offset:
                                 65536
                         }
@@ -133,29 +121,19 @@ async function updateManifest() {
                 manifestBlob
             );
 
-        const installer =
-            document.querySelector(
+        document
+            .querySelector(
                 "esp-web-install-button"
+            )
+            .setAttribute(
+                "manifest",
+                manifestURL
             );
-
-        installer.removeAttribute(
-            "manifest"
-        );
-
-        installer.setAttribute(
-            "manifest",
-            manifestURL
-        );
 
         document.getElementById(
             "status"
         ).innerText =
             `Selected ${folder}`;
-
-        console.log(
-            "Manifest Updated:",
-            folder
-        );
 
     } catch (
         error
@@ -178,43 +156,31 @@ document.addEventListener(
 
         await loadReleases();
 
-        const select =
+        if (
             document.getElementById(
                 "firmwareSelect"
-            );
-
-        if (
-            select.value
+            ).value
         ) {
 
-            await updateManifest();
+            updateManifest();
         }
 
-        select.addEventListener(
+        document
+        .getElementById(
+            "firmwareSelect"
+        )
+        .addEventListener(
             "change",
-            async () => {
-
-                await updateManifest();
-
-                console.log(
-                    "Version changed:",
-                    select.value
-                );
-            }
+            updateManifest
         );
 
         document
-            .getElementById(
-                "refreshBtn"
-            )
-            .addEventListener(
-                "click",
-                async () => {
-
-                    await loadReleases();
-
-                    await updateManifest();
-                }
-            );
+        .getElementById(
+            "refreshBtn"
+        )
+        .addEventListener(
+            "click",
+            loadReleases
+        );
     }
 );
