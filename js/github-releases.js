@@ -31,9 +31,7 @@ async function loadReleases() {
 
         if (error) {
 
-            console.error(
-                error
-            );
+            console.error(error);
 
             throw error;
         }
@@ -53,39 +51,31 @@ async function loadReleases() {
             return;
         }
 
-        data.forEach(
-            (
-                fw
-            ) => {
+        data.forEach((fw) => {
 
-                const option =
-                    document.createElement(
-                        "option"
-                    );
-
-                option.value =
-                    fw.folder_name;
-
-                option.textContent =
-                    fw.version;
-
-                select.appendChild(
-                    option
+            const option =
+                document.createElement(
+                    "option"
                 );
 
-                firmwareData[
-                    fw.folder_name
-                ] = fw;
-            }
-        );
+            option.value =
+                fw.folder_name;
 
-    } catch (
-        error
-    ) {
+            option.textContent =
+                fw.version;
 
-        console.error(
-            error
-        );
+            select.appendChild(
+                option
+            );
+
+            firmwareData[
+                fw.folder_name
+            ] = fw;
+        });
+
+    } catch (error) {
+
+        console.error(error);
 
         select.innerHTML =
             "<option>Error Loading Firmware</option>";
@@ -96,13 +86,28 @@ async function getFirmwareUrls(
     folder
 ) {
 
+    const fw =
+        firmwareData[
+            folder
+        ];
+
+    if (!fw) {
+
+        throw new Error(
+            "Firmware not found"
+        );
+    }
+
+    const baseName =
+        fw.firmware_name;
+
     const files = [
 
-        "ZYNTRIX_v1.0.1.ino.bootloader.bin",
+        `${baseName}.bootloader.bin`,
 
-        "ZYNTRIX_v1.0.1.ino.partitions.bin",
+        `${baseName}.partitions.bin`,
 
-        "ZYNTRIX_v1.0.1.ino.bin"
+        `${baseName}.bin`
     ];
 
     const result = [];
@@ -126,13 +131,9 @@ async function getFirmwareUrls(
                     300
                 );
 
-        if (
-            error
-        ) {
+        if (error) {
 
-            console.error(
-                error
-            );
+            console.error(error);
 
             throw error;
         }
