@@ -31,7 +31,9 @@ async function loadReleases() {
 
         if (error) {
 
-            console.error(error);
+            console.error(
+                error
+            );
 
             throw error;
         }
@@ -51,31 +53,39 @@ async function loadReleases() {
             return;
         }
 
-        data.forEach((fw) => {
+        data.forEach(
+            (
+                fw
+            ) => {
 
-            const option =
-                document.createElement(
-                    "option"
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+                option.value =
+                    fw.folder_name;
+
+                option.textContent =
+                    fw.version;
+
+                select.appendChild(
+                    option
                 );
 
-            option.value =
-                fw.folder_name;
+                firmwareData[
+                    fw.folder_name
+                ] = fw;
+            }
+        );
 
-            option.textContent =
-                fw.version;
+    } catch (
+        error
+    ) {
 
-            select.appendChild(
-                option
-            );
-
-            firmwareData[
-                fw.folder_name
-            ] = fw;
-        });
-
-    } catch (error) {
-
-        console.error(error);
+        console.error(
+            error
+        );
 
         select.innerHTML =
             "<option>Error Loading Firmware</option>";
@@ -86,28 +96,10 @@ async function getFirmwareUrls(
     folder
 ) {
 
-    const fw =
-        firmwareData[
-            folder
-        ];
-
-    if (!fw) {
-
-        throw new Error(
-            "Firmware not found"
-        );
-    }
-
-    const baseName =
-        fw.firmware_name;
-
     const files = [
-
-        `${baseName}.bootloader.bin`,
-
-        `${baseName}.partitions.bin`,
-
-        `${baseName}.bin`
+        "bootloader.bin",
+        "partitions.bin",
+        "firmware.bin"
     ];
 
     const result = [];
@@ -131,9 +123,13 @@ async function getFirmwareUrls(
                     300
                 );
 
-        if (error) {
+        if (
+            error
+        ) {
 
-            console.error(error);
+            console.error(
+                error
+            );
 
             throw error;
         }
