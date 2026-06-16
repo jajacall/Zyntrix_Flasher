@@ -175,12 +175,15 @@ document.addEventListener(
         );
 
         document
-        .getElementById(
-            "refreshBtn"
-        )
+        .getElementById("refreshBtn")
         .addEventListener(
             "click",
-            loadReleases
-        );
+        async () => {
+
+            await loadReleases();
+
+            await updateManifest();
+    }
+);
     }
 );
