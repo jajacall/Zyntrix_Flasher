@@ -152,16 +152,15 @@ async function updateManifest() {
         console.log(
             manifest
         );
-
-        console.log(
-            "Installing manifest:",
-            manifest
-        );
         
-        .setAttribute(
-            "manifest",
-            manifestURL
-        );   
+        document
+            .querySelector(
+                "esp-web-install-button"
+            )
+            .setAttribute(
+                "manifest",
+                manifestURL
+            );
 
         document.getElementById(
             "status"
