@@ -12,6 +12,21 @@ async function updateManifest() {
 
     try {
 
+        console.log(
+    "Path:",
+    `${folder}/bootloader.bin`
+);
+
+console.log(
+    "Path:",
+    `${folder}/partitions.bin`
+);
+
+console.log(
+    "Path:",
+    `${folder}/firmware.bin`
+);
+        
         const bootloader =
             await sb.storage
                 .from("firmware")
